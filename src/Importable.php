@@ -64,13 +64,17 @@ trait Importable
      *
      * @return Collection
      */
-    public function importSheets($path, callable $callback = null)
+    public function importSheets($path, callable $callback = null, $named = false)
     {
         $reader = $this->reader($path);
 
         $collections = [];
         foreach ($reader->getSheetIterator() as $key => $sheet) {
-            $collections[] = $this->importSheet($sheet, $callback);
+            if($named) {
+                $collections[] = [$sheet->getName() => $this->importSheet($sheet, $callback)];
+            } else {
+                $collections[] = $this->importSheet($sheet, $callback);
+            }
         }
         $reader->close();
 
